@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Calculator</title>
+		<style>
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				background-color: #5a8bb0;
+				margin: 0;
+			}
+			.calculator {
+				background-color: #d9e8f5;
+				border-radius: 20px;
+				padding: 20px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+			.display input {
+				background-color: #b0cdeb;
+				border-radius: 10px;
+				padding: 20px;
+				font-size: 24px;
+				width: 88%;
+				color: #333;
+				text-align: right;
+				border: none;
+				outline: none;
+				margin-bottom: 20px;
+			}
+			.buttons {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 10px;
+			}
+			.button {
+				background-color: #a0c0e0;
+				border: none;
+				border-radius: 10px;
+				padding: 20px;
+				font-size: 18px;
+				color: #333;
+				cursor: pointer;
+				text-align: center;
+			}
+			.button.enter {
+				background-color: #5a8bb0;
+				color: #fff;
+				grid-column: span 2;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="calculator">
+			<div class="display">
+				<input type="text" id="expression" readonly />
+			</div>
+			<div class="buttons">
+				<button class="button" onclick="appendCharacter('(')">(</button>
+				<button class="button" onclick="appendCharacter(')')">)</button>
+				<button class="button" onclick="useAnswer()">ans</button>
+				<button class="button" onclick="deleteCharacter()">del</button>
+				<button class="button" onclick="appendCharacter('7')">7</button>
+				<button class="button" onclick="appendCharacter('8')">8</button>
+				<button class="button" onclick="appendCharacter('9')">9</button>
+				<button class="button" onclick="clearDisplay()">clear</button>
+				<button class="button" onclick="appendCharacter('4')">4</button>
+				<button class="button" onclick="appendCharacter('5')">5</button>
+				<button class="button" onclick="appendCharacter('6')">6</button>
+				<button class="button" onclick="appendCharacter('%')">%</button>
+				<button class="button" onclick="appendCharacter('1')">1</button>
+				<button class="button" onclick="appendCharacter('2')">2</button>
+				<button class="button" onclick="appendCharacter('3')">3</button>
+				<button class="button" onclick="appendCharacter('√')">√</button>
+				<button class="button" onclick="appendCharacter('.')">.</button>
+				<button class="button" onclick="appendCharacter('0')">0</button>
+				<button class="button" onclick="appendCharacter('+')">+</button>
+				<button class="button" onclick="appendCharacter('-')">-</button>
+				<button class="button" onclick="appendCharacter('*')">x</button>
+				<button class="button" onclick="appendCharacter('/')">÷</button>
+				<button class="button enter" onclick="calculate()">ENTER</button>
+			</div>
+		</div>
+
+		<script>
+			let expressionElement = document.getElementById("expression");
+			let lastAnswer = "";
+
+			function appendCharacter(character) {
+				expressionElement.value += character;
+			}
+
+			function deleteCharacter() {
+				expressionElement.value = expressionElement.value.slice(0, -1);
+			}
+
+			function clearDisplay() {
+				expressionElement.value = "";
+			}
+
+			function useAnswer() {
+				expressionElement.value += lastAnswer;
+			}
+
+			function calculate() {
+				try {
+					let expression = expressionElement.value;
+
+					// Replace √ followed by numbers with Math.sqrt(numbers)
+					expression = expression.replace(/√(\d+)/g, "Math.sqrt($1)");
+
+					// Replace percentage symbol with its equivalent division
+					expression = expression.replace(/%/g, "/100");
+
+					let result = eval(expression);
+					expressionElement.value = result;
+					lastAnswer = result;
+				} catch (error) {
+					expressionElement.value = "Error";
+				}
+			}
+
+			// Add keyboard support
+			document.addEventListener("keydown", (e) => {
+				if (/[0-9+\-*/().]/.test(e.key)) {
+					appendCharacter(e.key);
+				} else if (e.key === "Enter") {
+					calculate();
+				} else if (e.key === "Backspace") {
+					deleteCharacter();
+				}
+			});
+		</script>
+	</body>
+</html>
